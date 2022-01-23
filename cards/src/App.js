@@ -42,9 +42,9 @@ class App extends React.Component  {
       <div className="App">
         <header className="App-header">Card triage</header>
         <div className="Cards">
-          {this.state.PENDING.map(card => <Card data={card}/>)}
-          {this.state.REJECTED.map(card => <Card data={card}/>)}
-          {this.state.DONE.map(card => <Card data={card}/>)}
+          <h5>Pending: {this.state.PENDING.map(card => <Card data={card}/>)}</h5>
+          <h5>Rejected: {this.state.REJECTED.map(card => <Card data={card}/>)}</h5>
+          <h5>Done: {this.state.DONE.map(card => <Card data={card}/>)}</h5>
 
         </div>
 
