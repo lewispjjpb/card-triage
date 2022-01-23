@@ -1,12 +1,15 @@
 import './App.css';
 import React from 'react';
 import axios from 'axios';
+import Card from './card.js'
 
 class App extends React.Component  {
   constructor(props) {
     super(props);
     this.state = {
-      cards: [],
+      PENDING: [],
+      REJECTED: [],
+      DONE: [],
     }
   }
 
@@ -18,7 +21,18 @@ class App extends React.Component  {
     axios.get('http://localhost:8000/cards')
       .then(results => {
         console.log(results.data);
-        this.setState({cards: results.data})
+        let update = {
+          PENDING: [],
+          REJECTED: [],
+          DONE: [],
+        }
+        for (let i = 0; i < results.data.length; i++) {
+          let status = results.data[i].status;
+          update[status].push(results.data[i])
+        }
+        this.setState({PENDING: update.PENDING})
+        this.setState({REJECTED: update.REJECTED})
+        this.setState({DONE: update.DONE})
         })
       .catch(err => console.log(err))
   }
@@ -27,7 +41,13 @@ class App extends React.Component  {
     return (
       <div className="App">
         <header className="App-header">Card triage</header>
-        <div className="Card"></div>
+        <div className="Cards">
+          {this.state.PENDING.map(card => <Card data={card}/>)}
+          {this.state.REJECTED.map(card => <Card data={card}/>)}
+          {this.state.DONE.map(card => <Card data={card}/>)}
+
+        </div>
+
       </div>
     )
   };
