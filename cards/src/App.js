@@ -10,7 +10,9 @@ class App extends React.Component  {
       PENDING: [],
       REJECTED: [],
       DONE: [],
-    }
+    };
+
+    this.changeStatus = this.changeStatus.bind(this);
   }
 
   componentDidMount() {
@@ -20,7 +22,6 @@ class App extends React.Component  {
   getCards() {
     axios.get('http://localhost:8000/cards')
       .then(results => {
-        console.log(results.data);
         let update = {
           PENDING: [],
           REJECTED: [],
@@ -37,14 +38,40 @@ class App extends React.Component  {
       .catch(err => console.log(err))
   }
 
+  changeStatus(e) {
+    e.preventDefault();
+    console.log(e.target.value)
+    const record = Number(e.target.value);
+    const status = e.target.name;
+    let newStatus;
+    if (status === 'PENDING' || status === 'REJECTED') {
+      newStatus = 'DONE'
+    }
+    if (status === 'DONE') {
+      newStatus = 'REJECTED'
+    }
+
+    let recordLocChange = this.state[status].filter( item => item.id === record)
+    recordLocChange[0].status = newStatus
+    console.log(recordLocChange)
+    this.setState({
+      [status]: this.state[status].filter( item => item.id !== record)
+    })
+
+    this.setState({
+      [newStatus]: this.state[newStatus].concat(recordLocChange)
+    })
+
+  }
+
   render() {
     return (
       <div className="App">
         <header className="App-header">Card triage</header>
         <div className="Cards">
-          <h5>Pending: {this.state.PENDING.map(card => <Card data={card}/>)}</h5>
-          <h5>Rejected: {this.state.REJECTED.map(card => <Card data={card}/>)}</h5>
-          <h5>Done: {this.state.DONE.map(card => <Card data={card}/>)}</h5>
+          <h5>Pending: {this.state.PENDING.map(card => <Card data={card} updateStatus={this.changeStatus} stat={card.status}/>)}</h5>
+          <h5>Done: {this.state.DONE.map(card => <Card data={card} updateStatus={this.changeStatus} stat={card.status}/>)}</h5>
+          <h5>Rejected: {this.state.REJECTED.map(card => <Card data={card} updateStatus={this.changeStatus} stat={card.status}/>)}</h5>
 
         </div>
 
