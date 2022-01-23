@@ -1,6 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import React from 'react';
+import axios from 'axios';
 
 class App extends React.Component  {
   constructor(props) {
@@ -8,25 +9,20 @@ class App extends React.Component  {
     this.state = {}
   }
 
+  componentDidMount() {
+    this.getCards();
+  }
 
+  getCards() {
+    axios.get('http://localhost:8000/cards')
+      .then(results => console.log(results))
+      .catch(err => console.log(err))
+  }
 
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <header className="App-header">Card triage</header>
       </div>
     )
   };
