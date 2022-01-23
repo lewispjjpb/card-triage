@@ -10,6 +10,8 @@ class App extends React.Component  {
       PENDING: [],
       REJECTED: [],
       DONE: [],
+      filterPatient: '',
+      filterCondition: '',
     };
 
     this.changeStatus = this.changeStatus.bind(this);
@@ -45,10 +47,10 @@ class App extends React.Component  {
     const status = e.target.name;
     let newStatus;
     if (status === 'PENDING' || status === 'REJECTED') {
-      newStatus = 'DONE'
+      newStatus = 'DONE';
     }
     if (status === 'DONE') {
-      newStatus = 'REJECTED'
+      newStatus = 'REJECTED';
     }
 
     let recordLocChange = this.state[status].filter( item => item.id === record)
@@ -65,9 +67,20 @@ class App extends React.Component  {
   }
 
   render() {
+    let allCards = this.state.PENDING.concat(this.state.DONE, this.state.REJECTED)
     return (
       <div className="App">
         <header className="App-header">Card triage</header>
+        <div>
+          Select patient:
+          <select value={this.state.filterPatient}>
+            {allCards.map(card => <option value={card.patient_name}>{card.patient_name}</option>)}
+          </select>
+        </div>
+        <div>
+          Select arrhythmias:
+          <select></select>
+        </div>
         <div className="Cards">
           <h5>Pending: {this.state.PENDING.map(card => <Card data={card} updateStatus={this.changeStatus} stat={card.status}/>)}</h5>
           <h5>Done: {this.state.DONE.map(card => <Card data={card} updateStatus={this.changeStatus} stat={card.status}/>)}</h5>
