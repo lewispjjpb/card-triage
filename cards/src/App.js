@@ -11,10 +11,14 @@ class App extends React.Component  {
       REJECTED: [],
       DONE: [],
       filterPatient: '',
-      filterCondition: '',
+      patientIsFiltered: false,
+      specificCondition: '',
+      conditionIsFiltered: false
     };
 
     this.changeStatus = this.changeStatus.bind(this);
+    this.filterNames = this.filterNames.bind(this);
+    this.filterConditions = this.filterConditions.bind(this);
   }
 
   componentDidMount() {
@@ -31,6 +35,10 @@ class App extends React.Component  {
         }
         for (let i = 0; i < results.data.length; i++) {
           let status = results.data[i].status;
+          let conditions = [];
+          for (let j = 0; j < results.data[i][j].arrhythmias) {
+            conditions.push()
+          }
           update[status].push(results.data[i])
         }
         this.setState({PENDING: update.PENDING})
@@ -63,28 +71,76 @@ class App extends React.Component  {
     this.setState({
       [newStatus]: this.state[newStatus].concat(recordLocChange)
     })
-
   }
+
+  filterNames(e) {
+    e.preventDefault();
+    this.setState({filterPatient: e.target.value});
+    this.setState({patientIsFiltered: true});
+  }
+
+  filterConditions(e) {
+    e.preventDefault();
+    this.setState({specificCondition: e.target.value});
+    this.setState({conditionIsFiltered: true})
+  }
+
 
   render() {
     let allCards = this.state.PENDING.concat(this.state.DONE, this.state.REJECTED)
     return (
       <div className="App">
         <header className="App-header">Card triage</header>
-        <div>
-          Select patient:
-          <select value={this.state.filterPatient}>
-            {allCards.map(card => <option value={card.patient_name}>{card.patient_name}</option>)}
-          </select>
-        </div>
-        <div>
-          Select arrhythmias:
-          <select></select>
+        <div className="Filters">
+          <div>
+            Select patient:
+            <select value={this.state.filterPatient} onChange={this.filterNames}>
+              {allCards.map(card => <option value={card.patient_name}>{card.patient_name}</option>)}
+            </select>
+          </div>
+          <button onClick={() => this.setState({patientIsFiltered: false})}>Clear patient filter</button>
+          <div>
+            Select arrhythmias:
+            <select value={this.state.specificCondition} onChange={this.filterConditions}>
+              {allCards.map(card => <option value={card.arrhythmias}>{card.arrhythmias}</option>)}
+            </select>
+          </div>
+          <button onClick={() => this.setState({conditionIsFiltered: false})}>Clear condition filter</button>
         </div>
         <div className="Cards">
-          <h5>Pending: {this.state.PENDING.map(card => <Card data={card} updateStatus={this.changeStatus} stat={card.status}/>)}</h5>
-          <h5>Done: {this.state.DONE.map(card => <Card data={card} updateStatus={this.changeStatus} stat={card.status}/>)}</h5>
-          <h5>Rejected: {this.state.REJECTED.map(card => <Card data={card} updateStatus={this.changeStatus} stat={card.status}/>)}</h5>
+          <h5>
+            Pending: {this.state.PENDING.map(card => {
+              if (!this.state.patientIsFiltered) {
+                return <Card data={card} updateStatus={this.changeStatus} stat={card.status}/>
+              } else {
+                if (card.patient_name === this.state.filterPatient) {
+                 return <Card data={card} updateStatus={this.changeStatus} stat={card.status}/>
+                }
+              }
+            })}
+          </h5>
+          <h5>
+            Done: {this.state.DONE.map(card => {
+              if (!this.state.patientIsFiltered) {
+                return <Card data={card} updateStatus={this.changeStatus} stat={card.status}/>
+              } else {
+                if (card.patient_name === this.state.filterPatient) {
+                 return <Card data={card} updateStatus={this.changeStatus} stat={card.status}/>
+                }
+              }
+            })}
+          </h5>
+          <h5>
+            Rejected: {this.state.REJECTED.map(card => {
+              if (!this.state.patientIsFiltered) {
+                return <Card data={card} updateStatus={this.changeStatus} stat={card.status}/>
+              } else {
+                if (card.patient_name === this.state.filterPatient) {
+                 return <Card data={card} updateStatus={this.changeStatus} stat={card.status}/>
+                }
+              }
+            })}
+          </h5>
 
         </div>
 
