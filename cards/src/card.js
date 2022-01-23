@@ -11,12 +11,12 @@ function Card(props) {
   }
   return (
     <div id={props.data.id} className="OneCard">
-      <div>{props.data.arrhythmias.map(symptom => symptom.concat('. '))}</div>
-      <div>{props.data.created_date}</div>
-      <div>{props.data.id}</div>
-      <div>{props.data.patient_name}</div>
-      <div>{props.stat}</div>
+      <div><em>Patient name: </em>{props.data.patient_name}</div>
+      <div><em>Conditions present: </em>{props.data.arrhythmias.map(symptom => symptom.concat('. '))}</div>
+      <div><em>Date recorded: </em>{new Date(props.data.created_date).toString()}</div>
+
       <button
+        className="green-button"
         onClick={props.updateStatus}
         value={[props.data.id]}
         name={props.stat}>
@@ -25,7 +25,5 @@ function Card(props) {
     </div>
   )
 }
-
-
 
 export default Card;

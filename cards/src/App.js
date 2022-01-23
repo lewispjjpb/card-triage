@@ -58,10 +58,16 @@ class App extends React.Component  {
         })
       .catch(err => console.log(err))
   }
-
+/**
+ * Note for next function: Typically I would use a post command to change
+ * the status at the database level and then run a subsequent database query
+ * to re-render the updated info.  For the sake of the exercise, this function
+ * only changes the state being held in the browser to match the new criteria,
+ * and will reset to the json server information every time the user refreshes
+ * the page.
+ */
   changeStatus(e) {
     e.preventDefault();
-    console.log(e.target.value)
     const record = Number(e.target.value);
     const status = e.target.name;
     let newStatus;
@@ -71,14 +77,11 @@ class App extends React.Component  {
     if (status === 'DONE') {
       newStatus = 'REJECTED';
     }
-
     let recordLocChange = this.state[status].filter( item => item.id === record)
     recordLocChange[0].status = newStatus
-    console.log(recordLocChange)
     this.setState({
       [status]: this.state[status].filter( item => item.id !== record)
     })
-
     this.setState({
       [newStatus]: this.state[newStatus].concat(recordLocChange)
     })
@@ -99,35 +102,30 @@ class App extends React.Component  {
 
   render() {
     let allCards = this.state.PENDING.concat(this.state.DONE, this.state.REJECTED)
-    // let allSymptoms = new Set();
-    // for (let i = 0; i < allCards.length; i++) {
-    //   let thisCard = allCards[i];
-    //   for (let j = 0; j < thisCard.arrhythmias.length; j++) {
-    //     allSymptoms.add(thisCard.arrhythmias[j])
-    //   }
-    // }
-    // this.setState({allArrhythmias: allSymptoms})
+
     return (
       <div className="App">
         <header className="App-header">Card triage</header>
         <div className="Filters">
-          <div>
+          <div className="OneFilter">
             Select patient:
-            <select value={this.state.filterPatient} onChange={this.filterNames}>
+            <select value={this.state.filterPatient} onChange={this.filterNames} selected="Pick">
+              <option value="Pick">Choose patient</option>
               {allCards.map(card => <option value={card.patient_name}>{card.patient_name}</option>)}
             </select>
+            <button className="green-button" className="green-button" onClick={() => this.setState({patientIsFiltered: false})}>Clear patient filter</button>
           </div>
-          <button onClick={() => this.setState({patientIsFiltered: false})}>Clear patient filter</button>
-          <div>
+          <div className="OneFilter">
             Select arrhythmias:
-            <select value={this.state.specificCondition} onChange={this.filterConditions}>
+            <select value={this.state.specificCondition} onChange={this.filterConditions} selected="Pick">
+            <option value="Pick">Choose condition</option>
               {this.state.allArrhythmias.map(card => <option value={card}>{card}</option>)}
             </select>
+            <button className="green-button" onClick={() => this.setState({conditionIsFiltered: false})}>Clear condition filter</button>
           </div>
-          <button onClick={() => this.setState({conditionIsFiltered: false})}>Clear condition filter</button>
         </div>
         <div className="Cards">
-          <h5>
+          <div>
             Pending: {this.state.PENDING.map(card => {
               if (!this.state.patientIsFiltered && !this.state.conditionIsFiltered) {
                 return <Card data={card} updateStatus={this.changeStatus} stat={card.status}/>
@@ -145,8 +143,8 @@ class App extends React.Component  {
                 }
               }
             })}
-          </h5>
-          <h5>
+          </div>
+          <div>
             Done: {this.state.DONE.map(card => {
               if (!this.state.patientIsFiltered && !this.state.conditionIsFiltered) {
                 return <Card data={card} updateStatus={this.changeStatus} stat={card.status}/>
@@ -164,8 +162,8 @@ class App extends React.Component  {
                 }
               }
             })}
-          </h5>
-          <h5>
+          </div>
+          <div>
             Rejected: {this.state.REJECTED.map(card => {
               if (!this.state.patientIsFiltered && !this.state.conditionIsFiltered) {
                 return <Card data={card} updateStatus={this.changeStatus} stat={card.status}/>
@@ -183,10 +181,8 @@ class App extends React.Component  {
                 }
               }
             })}
-          </h5>
-
+          </div>
         </div>
-
       </div>
     )
   };
