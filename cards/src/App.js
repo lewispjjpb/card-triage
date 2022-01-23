@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import React from 'react';
 import axios from 'axios';
@@ -6,7 +5,9 @@ import axios from 'axios';
 class App extends React.Component  {
   constructor(props) {
     super(props);
-    this.state = {}
+    this.state = {
+      cards: [],
+    }
   }
 
   componentDidMount() {
@@ -15,7 +16,10 @@ class App extends React.Component  {
 
   getCards() {
     axios.get('http://localhost:8000/cards')
-      .then(results => console.log(results))
+      .then(results => {
+        console.log(results.data);
+        this.setState({cards: results.data})
+        })
       .catch(err => console.log(err))
   }
 
@@ -23,6 +27,7 @@ class App extends React.Component  {
     return (
       <div className="App">
         <header className="App-header">Card triage</header>
+        <div className="Card"></div>
       </div>
     )
   };
